@@ -9,20 +9,20 @@
     args:
       warn: no
     when: not ddkey.stat.exists
-  when: ansible_distribution_version|int == 11
+  when: ansible_distribution_version|int == 11 and not datadog_skip_repo_setup
 
 - name: Download RPM key
   get_url:
     url: "{{ datadog_zypper_gpgkey }}"
     dest: /tmp/DATADOG_RPM_KEY.public
     checksum: "sha256:{{ datadog_zypper_gpgkey_sha256sum }}"
-  when: ansible_distribution_version|int >= 12
+  when: ansible_distribution_version|int >= 12 and not datadog_skip_repo_setup
 
 - name: Import RPM key
   rpm_key:
     key: /tmp/DATADOG_RPM_KEY.public
     state: present
-  when: not ansible_check_mode
+  when: not (ansible_check_mode or datadog_skip_repo_setup)
 
 - block:  # Work around due to SNI check for SLES11
   - name: Stat if new RPM key already exists
@@ -34,20 +34,20 @@
     args:
       warn: no
     when: not ddnewkey.stat.exists
-  when: ansible_distribution_version|int == 11
+  when: ansible_distribution_version|int == 11 and not datadog_skip_repo_setup
 
 - name: Download new RPM key
   get_url:
     url: "{{ datadog_zypper_gpgkey_e09422b3 }}"
     dest: /tmp/DATADOG_RPM_KEY_E09422B3.public
     checksum: "sha256:{{ datadog_zypper_gpgkey_e09422b3_sha256sum }}"
-  when: ansible_distribution_version|int >= 12
+  when: ansible_distribution_version|int >= 12 and not datadog_skip_repo_setup
 
 - name: Import new RPM key
   rpm_key:
     key: /tmp/DATADOG_RPM_KEY_E09422B3.public
     state: present
-  when: not ansible_check_mode
+  when: not (ansible_check_mode or datadog_skip_repo_setup)
 
 # ansible don't allow repo_gpgcheck to be set, we have to create the repo file manually
 - name: Install DataDog zypper repo
@@ -57,11 +57,12 @@
     owner: "root"
     group: "root"
   register: datadog_zypper_repo
+  when: not datadog_skip_repo_setup
 
 # refresh zypper repos only if the template changed
 - name: refresh Datadog zypper_repos  # noqa 503
   command: zypper refresh datadog
-  when: datadog_zypper_repo.changed and not ansible_check_mode
+  when: datadog_zypper_repo.changed and not (ansible_check_mode or datadog_skip_repo_setup)
   args:
     warn: false  # silence warning about using zypper directly
 

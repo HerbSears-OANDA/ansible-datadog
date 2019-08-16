@@ -14,6 +14,9 @@ datadog_group: root
 # list of additional groups for datadog_user
 datadog_additional_groups: {}
 
+# skip repos and keys setup
+datadog_skip_repo_setup: no
+
 # default apt repo
 datadog_apt_repo: "deb https://apt.datadoghq.com/ stable 6"
 datadog_apt_cache_valid_time: 3600
@@ -56,7 +59,7 @@ datadog_windows_ddagentuser_name: ""
 # Override to change the password of the created windows user.
 datadog_windows_ddagentuser_password: ""
 
-# do not modify.  Default empty value for constructing the list of optional 
+# do not modify.  Default empty value for constructing the list of optional
 # arguments to supply to the windows installer.
 win_install_args: " "
 

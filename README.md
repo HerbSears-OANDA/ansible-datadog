@@ -33,6 +33,7 @@ Role Variables
   + `/etc/datadog-agent/datadog.yaml` for agent6
   + `/etc/dd-agent/datadog.conf` for agent5 (under the `[Main]` section).
 - `datadog_config_ex` - Extra INI sections to go in `/etc/dd-agent/datadog.conf` (optional). Agent5 only.
+- `datadog_skip_repo_setup` - Skip setting up apt/yum repositories (default no).  Useful on host that don't have access to the public internet.
 - `datadog_apt_repo` - Override default Datadog `apt` repository
 - `datadog_apt_cache_valid_time` - Override the default apt cache expiration time (default 1 hour)
 - `datadog_apt_key_url_new` - Override default url to Datadog `apt` key (key ID `382E94DE` ; the deprecated `datadog_apt_key_url` variable refers to an expired key that's been removed from the role)
